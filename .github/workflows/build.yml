@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  npm_config_build_from_source: false
+
 jobs:
   build-windows:
     strategy:
@@ -20,8 +23,9 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npx tsc
-      - run: npm run build
+      - shell: bash
+        run: npm run build -- --${{ matrix.arch }}
       - uses: actions/upload-artifact@v4
         with:
           name: Nikxel-Setup-${{ matrix.arch }}
-          path: dist/Nikxel\ Setup*.exe
+          path: dist/Nikxel Setup*.exe
