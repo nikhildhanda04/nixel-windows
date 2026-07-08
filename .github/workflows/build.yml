@@ -7,9 +7,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-env:
-  npm_config_build_from_source: false
-
 jobs:
   build:
     runs-on: windows-latest

@@ -6,18 +6,19 @@
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "tsc && cp src/renderer/index.html dist/renderer/ && cp src/renderer/style.css dist/renderer/ && cp -r assets dist/ && electron .",
-    "build": "tsc && cp src/renderer/index.html dist/renderer/ && cp src/renderer/style.css dist/renderer/ && electron-builder",
+    "build": "tsc && cp src/renderer/index.html dist/renderer/ && cp src/renderer/style.css dist/renderer/ && rm -rf dist/win-* && electron-builder",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "googleapis": "^148.0.0",
-    "sharp": "^0.33.5"
+    "pngjs": "^7.0.0"
   },
   "optionalDependencies": {
     "uiohook-napi": "^1.5.5"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@types/pngjs": "^6.0.5",
     "electron": "^32.0.0",
     "electron-builder": "^25.1.8",
     "typescript": "^5.7.3"
@@ -30,7 +31,9 @@
       "assets/**/*"
     ],
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "assets/icon.ico",
       "artifactName": "${productName} Setup ${version}-${arch}.${ext}"
     },
