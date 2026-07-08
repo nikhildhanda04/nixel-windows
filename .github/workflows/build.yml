@@ -11,11 +11,8 @@ env:
   npm_config_build_from_source: false
 
 jobs:
-  build-windows:
-    strategy:
-      matrix:
-        arch: [x64, arm64]
-    runs-on: ${{ matrix.arch == 'arm64' && 'windows-arm64' || 'windows-latest' }}
+  build:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,9 +20,8 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npx tsc
-      - shell: bash
-        run: npm run build -- --${{ matrix.arch }}
+      - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
-          name: Nikxel-Setup-${{ matrix.arch }}
-          path: dist/Nikxel Setup*.exe
+          name: Nikxel-Setup-x64
+          path: "dist/Nikxel Setup*.exe"
