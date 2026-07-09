@@ -16,6 +16,7 @@ interface Window {
     getCalendarStatus: () => Promise<string>;
     openExternal: (url: string) => void;
     getDefaultSprite: () => Promise<string>;
+    log: (level: string, message: string) => void;
     onConfig: (callback: (config: any) => void) => () => void;
     saveConfig: (updates: any) => void;
   };

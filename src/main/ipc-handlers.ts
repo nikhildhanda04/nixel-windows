@@ -1,7 +1,7 @@
 import { ipcMain, shell, BrowserWindow } from "electron";
 import fs from "fs";
 import path from "path";
-import { configPath, spritePath, defaultSpritePath, googleCredsPath } from "./paths";
+import { appDataDir, configPath, spritePath, defaultSpritePath, googleCredsPath } from "./paths";
 import { AppConfig } from "../shared/types";
 import { moveWindow, setWindowIgnoreMouse } from "./window";
 import { refreshTrayMenu } from "./tray";
@@ -33,6 +33,13 @@ export function saveConfig(updates: Partial<AppConfig>): void {
 }
 
 export function setupIPCHandlers(mainWindow: BrowserWindow): void {
+  // Diagnostics — logs from renderer
+  ipcMain.on("log", (_event, level: string, message: string) => {
+    const logPath = path.join(appDataDir(), "renderer.log");
+    const timestamp = new Date().toISOString();
+    fs.appendFileSync(logPath, `[${timestamp}] [${level}] ${message}\n`);
+  });
+
   // Window movement
   ipcMain.on("move-window", (_event, x: number, y: number) => {
     moveWindow(x, y);

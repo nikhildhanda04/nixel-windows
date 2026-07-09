@@ -61,6 +61,11 @@ contextBridge.exposeInMainWorld("nikxelAPI", {
     return ipcRenderer.invoke("get-default-sprite");
   },
 
+  // Diagnostics
+  log: (level: string, message: string) => {
+    ipcRenderer.send("log", level, message);
+  },
+
   // Config
   onConfig: (callback: (config: any) => void) => {
     ipcRenderer.on("config", (_: IpcRendererEvent, config: any) => callback(config));
