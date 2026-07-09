@@ -4,8 +4,22 @@ import { createTray } from "./tray";
 import { setupIPCHandlers, readConfig, saveConfig } from "./ipc-handlers";
 import { startKeyboardHook, stopKeyboardHook } from "./keyboard";
 import { stopCalendar } from "./calendar";
+import { appDataDir } from "./paths";
+import fs from "fs";
+import path from "path";
+
+function log(level: string, message: string): void {
+  try {
+    const logPath = path.join(appDataDir(), "app.log");
+    const timestamp = new Date().toISOString();
+    fs.appendFileSync(logPath, `[${timestamp}] [${level}] ${message}\n`);
+  } catch {
+    // Can't log if logging fails
+  }
+}
 
 app.whenReady().then(() => {
+  log("info", "app started");
   const config = readConfig();
   const mainWindow = createMainWindow();
 
