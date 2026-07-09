@@ -16,18 +16,6 @@ let pageantTargetX = 0;
 let pageantTargetY = 0;
 
 function loadSprite(): void {
-  // Check for custom sprite first
-  const img = new Image();
-  img.onload = () => {
-    renderer.setSpriteSheet(img);
-  };
-  img.onerror = () => {
-    // Fallback: try loading from assets
-    const fallback = new Image();
-    fallback.onload = () => renderer.setSpriteSheet(fallback);
-    fallback.src = "../../assets/sprites.png";
-  };
-
   // Try local custom first, then fallback
   if (window.nikxelAPI) {
     window.nikxelAPI.onSpriteProcessed((success, path) => {
@@ -39,14 +27,15 @@ function loadSprite(): void {
     });
 
     window.nikxelAPI.onSpriteReset(() => {
-      const fallback = new Image();
-      fallback.onload = () => renderer.setSpriteSheet(fallback);
-      fallback.src = "../../assets/sprites.png";
+      // Default sprite is re-sent by main via default-sprite IPC
+    });
+
+    window.nikxelAPI.onDefaultSprite((dataUrl) => {
+      const img = new Image();
+      img.onload = () => renderer.setSpriteSheet(img);
+      img.src = dataUrl;
     });
   }
-
-  // Initial load: try local user sprite, fallback to bundled
-  img.src = "../../assets/sprites.png";
 }
 
 function setupIPCListeners(): void {

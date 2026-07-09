@@ -95,6 +95,13 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
       }
       config.customSpritePath = undefined;
       saveConfig({ customSpritePath: undefined });
+      // Send default sprite again
+      const defPath = defaultSpritePath();
+      if (fs.existsSync(defPath)) {
+        const data = fs.readFileSync(defPath);
+        const base64 = data.toString("base64");
+        mainWindow.webContents.send("default-sprite", `data:image/png;base64,${base64}`);
+      }
       mainWindow.webContents.send("sprite-reset");
       refreshTrayMenu();
     } catch (e) {
@@ -123,6 +130,14 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
   mainWindow.webContents.on("did-finish-load", () => {
     const cfg = readConfig();
     mainWindow.webContents.send("config", cfg);
+
+    // Send default sprite as base64 data URL (handles ASAR vs extraResources)
+    const defPath = defaultSpritePath();
+    if (fs.existsSync(defPath)) {
+      const data = fs.readFileSync(defPath);
+      const base64 = data.toString("base64");
+      mainWindow.webContents.send("default-sprite", `data:image/png;base64,${base64}`);
+    }
 
     startKeyboardHook(mainWindow);
 

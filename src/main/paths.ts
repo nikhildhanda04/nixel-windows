@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import { app } from "electron";
 
 export function appDataDir(): string {
   const appdata = process.env.APPDATA || path.join(process.env.USERPROFILE || "~", "AppData", "Roaming");
@@ -19,6 +20,9 @@ export function spritePath(): string {
 }
 
 export function defaultSpritePath(): string {
+  if (app.isPackaged) {
+    return path.join(process.resourcesPath, "assets", "sprites.png");
+  }
   return path.join(__dirname, "..", "..", "assets", "sprites.png");
 }
 

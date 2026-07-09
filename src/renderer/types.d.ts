@@ -15,6 +15,7 @@ interface Window {
     connectCalendar: () => void;
     getCalendarStatus: () => Promise<string>;
     openExternal: (url: string) => void;
+    onDefaultSprite: (callback: (dataUrl: string) => void) => () => void;
     onConfig: (callback: (config: any) => void) => () => void;
     saveConfig: (updates: any) => void;
   };

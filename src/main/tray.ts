@@ -54,7 +54,7 @@ function updateTrayMenu(): void {
         const win = getMainWindow();
         if (win) {
           win.show();
-          setWindowIgnoreMouse(true);
+          setWindowIgnoreMouse(false);
         }
       },
     },

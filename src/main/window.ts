@@ -47,8 +47,10 @@ export function getMainWindow(): BrowserWindow | null {
   return mainWindow;
 }
 
-export function setWindowIgnoreMouse(_ignore: boolean): void {
-  // No-op: click-through handled by CSS pointer-events on body vs canvas
+export function setWindowIgnoreMouse(ignore: boolean): void {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.setIgnoreMouseEvents(ignore, { forward: true });
+  }
 }
 
 export function moveWindow(x: number, y: number): void {
