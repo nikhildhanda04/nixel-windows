@@ -56,10 +56,9 @@ contextBridge.exposeInMainWorld("nikxelAPI", {
     ipcRenderer.send("open-external", url);
   },
 
-  // Default sprite data URL (works in both dev and packaged)
-  onDefaultSprite: (callback: (dataUrl: string) => void) => {
-    ipcRenderer.on("default-sprite", (_: IpcRendererEvent, dataUrl: string) => callback(dataUrl));
-    return () => ipcRenderer.removeAllListeners("default-sprite");
+  // Default sprite (request-based, no race condition on initial load)
+  getDefaultSprite: () => {
+    return ipcRenderer.invoke("get-default-sprite");
   },
 
   // Config

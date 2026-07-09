@@ -49,6 +49,16 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
     }
   });
 
+  // Default sprite (request-based to avoid race condition)
+  ipcMain.handle("get-default-sprite", () => {
+    const defPath = defaultSpritePath();
+    if (fs.existsSync(defPath)) {
+      const data = fs.readFileSync(defPath);
+      return `data:image/png;base64,${data.toString("base64")}`;
+    }
+    return null;
+  });
+
   // Calendar
   ipcMain.on("connect-calendar", () => {
     startCalendar(mainWindow);
@@ -60,6 +70,14 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
   });
 
   // Sprite management
+  function spritePathToDataUrl(filePath: string): string | null {
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath);
+      return `data:image/png;base64,${data.toString("base64")}`;
+    }
+    return null;
+  }
+
   ipcMain.on("use-custom-sprite", (_event, filePath: string) => {
     try {
       if (fs.existsSync(filePath)) {
@@ -67,7 +85,8 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
         fs.copyFileSync(filePath, dest);
         config.customSpritePath = dest;
         saveConfig({ customSpritePath: dest });
-        mainWindow.webContents.send("sprite-processed", true, dest);
+        const dataUrl = spritePathToDataUrl(dest);
+        mainWindow.webContents.send("sprite-processed", true, dataUrl);
         refreshTrayMenu();
       }
     } catch (e) {
@@ -80,7 +99,8 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
       const dest = await processSpriteSheet(filePath);
       config.customSpritePath = dest;
       saveConfig({ customSpritePath: dest });
-      mainWindow.webContents.send("sprite-processed", true, dest);
+      const dataUrl = spritePathToDataUrl(dest);
+      mainWindow.webContents.send("sprite-processed", true, dataUrl);
       refreshTrayMenu();
     } catch (e) {
       mainWindow.webContents.send("sprite-processed", false);
@@ -95,13 +115,6 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
       }
       config.customSpritePath = undefined;
       saveConfig({ customSpritePath: undefined });
-      // Send default sprite again
-      const defPath = defaultSpritePath();
-      if (fs.existsSync(defPath)) {
-        const data = fs.readFileSync(defPath);
-        const base64 = data.toString("base64");
-        mainWindow.webContents.send("default-sprite", `data:image/png;base64,${base64}`);
-      }
       mainWindow.webContents.send("sprite-reset");
       refreshTrayMenu();
     } catch (e) {
@@ -130,14 +143,6 @@ export function setupIPCHandlers(mainWindow: BrowserWindow): void {
   mainWindow.webContents.on("did-finish-load", () => {
     const cfg = readConfig();
     mainWindow.webContents.send("config", cfg);
-
-    // Send default sprite as base64 data URL (handles ASAR vs extraResources)
-    const defPath = defaultSpritePath();
-    if (fs.existsSync(defPath)) {
-      const data = fs.readFileSync(defPath);
-      const base64 = data.toString("base64");
-      mainWindow.webContents.send("default-sprite", `data:image/png;base64,${base64}`);
-    }
 
     startKeyboardHook(mainWindow);
 

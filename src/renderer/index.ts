@@ -15,26 +15,31 @@ let pageantActive = false;
 let pageantTargetX = 0;
 let pageantTargetY = 0;
 
-function loadSprite(): void {
-  // Try local custom first, then fallback
-  if (window.nikxelAPI) {
-    window.nikxelAPI.onSpriteProcessed((success, path) => {
-      if (success && path) {
-        const customImg = new Image();
-        customImg.onload = () => renderer.setSpriteSheet(customImg);
-        customImg.src = `file://${path}`;
-      }
-    });
+async function loadSprite(): Promise<void> {
+  if (!window.nikxelAPI) return;
 
-    window.nikxelAPI.onSpriteReset(() => {
-      // Default sprite is re-sent by main via default-sprite IPC
-    });
-
-    window.nikxelAPI.onDefaultSprite((dataUrl) => {
+  window.nikxelAPI.onSpriteProcessed((success, dataUrl) => {
+    if (success && dataUrl) {
       const img = new Image();
       img.onload = () => renderer.setSpriteSheet(img);
       img.src = dataUrl;
-    });
+    }
+  });
+
+  window.nikxelAPI.onSpriteReset(async () => {
+    const dataUrl = await window.nikxelAPI!.getDefaultSprite();
+    if (dataUrl) {
+      const img = new Image();
+      img.onload = () => renderer.setSpriteSheet(img);
+      img.src = dataUrl;
+    }
+  });
+
+  const dataUrl = await window.nikxelAPI.getDefaultSprite();
+  if (dataUrl) {
+    const img = new Image();
+    img.onload = () => renderer.setSpriteSheet(img);
+    img.src = dataUrl;
   }
 }
 

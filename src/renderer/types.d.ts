@@ -10,12 +10,12 @@ interface Window {
     processSprite: (filePath: string) => void;
     useCustomSprite: (filePath: string) => void;
     resetSprite: () => void;
-    onSpriteProcessed: (callback: (success: boolean, path?: string) => void) => () => void;
+    onSpriteProcessed: (callback: (success: boolean, dataUrl?: string) => void) => () => void;
     onSpriteReset: (callback: () => void) => () => void;
     connectCalendar: () => void;
     getCalendarStatus: () => Promise<string>;
     openExternal: (url: string) => void;
-    onDefaultSprite: (callback: (dataUrl: string) => void) => () => void;
+    getDefaultSprite: () => Promise<string>;
     onConfig: (callback: (config: any) => void) => () => void;
     saveConfig: (updates: any) => void;
   };
