@@ -5,7 +5,7 @@
   "description": "Nikxel — Your Pixel Desktop Companion for Windows",
   "main": "dist/main/index.js",
   "scripts": {
-    "bundle-renderer": "esbuild dist/renderer/index.js --bundle --platform=browser --format=iife --outfile=dist/renderer/index.js --allow-overwrite && rm -rf dist/renderer/engine dist/renderer/input dist/renderer/interaction dist/shared",
+    "bundle-renderer": "esbuild dist/renderer/index.js --bundle --platform=browser --format=iife --outfile=dist/renderer/index.js --allow-overwrite && rm -rf dist/renderer/engine dist/renderer/input dist/renderer/interaction",
     "dev": "tsc && npm run bundle-renderer && cp src/renderer/index.html dist/renderer/ && cp src/renderer/style.css dist/renderer/ && cp -r assets dist/ && electron .",
     "build": "tsc && npm run bundle-renderer && cp src/renderer/index.html dist/renderer/ && cp src/renderer/style.css dist/renderer/ && rm -rf dist/win-* && electron-builder",
     "typecheck": "tsc --noEmit"
